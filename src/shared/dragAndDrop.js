@@ -1,55 +1,8 @@
-// export const dragAndDrop = task => {
-//   // const task = document.querySelector('.boardsContent__allColumns__overflowBlock__column__taskStorage__task');
-//   const allTaskStorages = document.querySelectorAll('.boardsContent__allColumns__overflowBlock__column__taskStorage');
+import { deleteTask, dragAndDropTask, getDataDragAndDropTask } from '../api/api-handlers';
+import { showBlockSpinner } from '../components/spinner/spinner';
+import { LocalStorageService } from './ls-service';
 
-  // const dragStart = function () {
-  //   setTimeout(() => {
-  //     this.classList.add('hide');
-  //   }, 0)
-  // };
-
-  // const dragEnd = function () {
-  //   this.classList.remove('hide');
-  // };
-
-  // const dragOver = function (event) {
-  //   event.preventDefault();
-  // };
-
-  // const dragEnter = function (event) {
-  //   event.preventDefault();
-  //   this.classList.add('hovered');
-  // };
-
-  // const dragLeave = function () {
-  //   this.classList.remove('hovered');
-  // };
-
-  // const dragDrop = function () {
-  //   this.append(task);
-  //   this.classList.remove('hovered');
-  // };
-
-//   allTaskStorages.forEach( storage  => {
-//     storage.addEventListener('dragover', dragOver);
-//     storage.addEventListener('dragenter', dragEnter);
-//     storage.addEventListener('dragleave', dragLeave);
-//     storage.addEventListener('drop', dragDrop);
-//   })
-
-//   task.addEventListener('dragstart', dragStart);
-//   task.addEventListener('dragend', dragEnd);
-// };
-
-// export const dragAndDrop = () => {
-//   const
-// }
-
-export function allowDrop(event) {
-      event.preventDefault();
-}
-
-export function drag (event) {
+export const drag = function (event) {
   event.dataTransfer.setData('id', event.target.id);
   setTimeout(() => {
     this.classList.add('hide');
@@ -66,21 +19,19 @@ export const dragOver = function (event) {
 
 export const dragEnter = function (event) {
   event.preventDefault();
-  this.classList.add('hovered');
 };
 
-export const dragLeave = function () {
-  this.classList.remove('hovered');
+export const dragDrop = async function ( event ) {
+  const taskId = event.dataTransfer.getData('id');
+  const primaryColumnId = LocalStorageService.getIdColumn();
+  const columnId = this.getAttribute('columnKey');
+  if (primaryColumnId !== columnId) {
+    this.prepend(document.getElementById(taskId));
+    showBlockSpinner();
+    await getDataDragAndDropTask(primaryColumnId, taskId)
+      .then( response => {
+        dragAndDropTask(columnId, taskId, response.data.content, response.data.taskNumber)
+      })
+    deleteTask(primaryColumnId, taskId);
+  }
 };
-
-export const dragDrop = function () {
-  let itemId = event.dataTransfer.getData('id');
-  this.prepend(document.getElementById(itemId));
-  this.classList.remove('hovered');
-};
-
-export function drop (event) {
-  let itemId = event.dataTransfer.getData('id');
-  console.log('sahd', itemId);
-  event.target.prepend(document.getElementById(itemId));
-}

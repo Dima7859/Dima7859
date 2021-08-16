@@ -1,6 +1,5 @@
 import { updateBoards } from '../api/api-handlers';
 import { checkAgreement } from './agreementUser';
-import { dragAndDrop } from './dragAndDrop';
 import { menuHederHendler, userNameAvatar } from './heder';
 import { LocalStorageService } from './ls-service';
 import { openMenu } from './menuMainPage';

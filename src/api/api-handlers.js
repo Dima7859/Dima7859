@@ -8,6 +8,7 @@ import { LocalStorageService } from '../shared/ls-service';
 import { routes } from '../shared/constants/routes';
 import { boardContentHendler } from '../shared/boardContent';
 import { hideBlockSpinner, showBlockSpinner } from '../components/spinner/spinner';
+import { viewingBoardsUser } from '../shared/viewingBoards';
 
 
 export const initApi = () => {
@@ -156,14 +157,76 @@ export const renameColumn = ( id, newName ) => {
   return axios.patch(`${dataBaceUrl}/miniLabBoards/${LocalStorageService.getIdBoard()}/columns/${id}.json`,{
     name: newName
   })
-    .then( result => updateBoards());
+    .then( () => updateBoards());
 }
 
-export const createTaskColumns = (id, content) => {
+export const createTaskColumns = (id, content, taskNumber) => {
+  showBlockSpinner();
   axios.post(`${dataBaceUrl}/miniLabBoards/${LocalStorageService.getIdBoard()}/columns/${id}.json`, {
-    content
+    content,
+    taskNumber
   })
-    .then( () => updateBoards());
+    .then( async () => {
+      await updateBoards();
+      hideBlockSpinner();
+    });
+};
+
+export const dragAndDropTask = ( idColumn, idTask, content, taskNumber ) => {
+  return axios.patch(`${dataBaceUrl}/miniLabBoards/${LocalStorageService.getIdBoard()}/columns/${idColumn}/${idTask}.json`,{
+    content,
+    taskNumber
+  })
+}
+
+export const deleteTask = (idColumn, idTask) => {
+  axios.delete(`${dataBaceUrl}/miniLabBoards/${LocalStorageService.getIdBoard()}/columns/${idColumn}/${idTask}.json`)
+    .then( async () => {
+      await updateBoards();
+      hideBlockSpinner();
+    });
+};
+
+export const deleteBoards = () => {
+  axios.delete(`${dataBaceUrl}/miniLabBoards/${LocalStorageService.getIdBoard()}.json`)
+    .then( async () => {
+      LocalStorageService.removeIdBoard();
+      LocalStorageService.removeIdColumn();
+      LocalStorageService.removeBoardData();
+      viewingBoardsUser('active');
+      setTimeout(() => hideBlockSpinner(),700);
+    });
+};
+
+export const renameBoard = ( newName ) => {
+  return axios.patch(`${dataBaceUrl}/miniLabBoards/${LocalStorageService.getIdBoard()}.json`,{
+    name: newName
+  })
+    .then( async () => {
+      await updateBoards();
+      viewingBoardsUser('active');
+      setTimeout(() => hideBlockSpinner(),700);
+    });
+}
+
+export const deleteColumn = (idColumn) => {
+  axios.delete(`${dataBaceUrl}/miniLabBoards/${LocalStorageService.getIdBoard()}/columns/${idColumn}.json`)
+    .then( async () => {
+      LocalStorageService.removeIdColumn();
+      await updateBoards();
+      setTimeout(() => hideBlockSpinner(),700);
+    });
+};
+
+export const updateTaskNumber = ( newAllTaskNumber ) => {
+  return axios.patch(`${dataBaceUrl}/miniLabBoards/${LocalStorageService.getIdBoard()}.json`,{
+    AllTaskNumber: newAllTaskNumber
+  })
+}
+
+export const getDataDragAndDropTask = async (idColumn, idTask) => {
+  return axios.get(`${dataBaceUrl}/miniLabBoards/${LocalStorageService.getIdBoard()}/columns/${idColumn}/${idTask}.json`)
+    .then( response => response);
 };
 
 initApi();
