@@ -299,17 +299,17 @@ export const boardContentHendler = boardContent => {
     let verificationContent = inputCreateTask.value.split(' ');
     let temporaryContentStorage = [];
 
-    verificationContent.forEach( item => {
-      const wordLengthCheck = item.split('');
-      let counter = 32;
-      let newCounter = 0;
-      let validLengthCheck;
+    // verificationContent.forEach( item => {
+    //   const wordLengthCheck = item.split('');
+    //   let counter = 32;
+    //   let newCounter = 0;
+    //   let validLengthCheck;
 
-      if (wordLengthCheck.length <= counter) {
-        temporaryContentStorage.push(item);
-      }
+      // if (wordLengthCheck.length <= counter) {
+      //   temporaryContentStorage.push(item);
+      // }
 
-      newCounter = 32 * Math.floor(wordLengthCheck.length / 32);
+      // newCounter = 32 * Math.floor(wordLengthCheck.length / 32);
 
       // const wordLengthCheckFunction = () => {
       //   if (wordLengthCheck.length > counter) {
@@ -318,17 +318,17 @@ export const boardContentHendler = boardContent => {
       //   }
       // };
 
-      while(counter < (newCounter + 32)) {
-        // wordLengthCheckFunction();
-        wordLengthCheck.splice(counter + 1, 0, "-", ' ');
-        validLengthCheck = wordLengthCheck.join('');
-        counter = counter + 35;
-      }
+    //   while(counter < (newCounter + 32)) {
+    //     // wordLengthCheckFunction();
+    //     wordLengthCheck.splice(counter + 1, 0, "-", ' ');
+    //     validLengthCheck = wordLengthCheck.join('');
+    //     counter = counter + 35;
+    //   }
 
-      temporaryContentStorage.push(validLengthCheck);
-    })
+    //   temporaryContentStorage.push(validLengthCheck);
+    // })
 
-    validContentTask = temporaryContentStorage.join(' ');
+    // validContentTask = temporaryContentStorage.join(' ');
 
     arrTaskContent.forEach(item => {
       if (item === inputCreateTask.value) {
@@ -337,7 +337,9 @@ export const boardContentHendler = boardContent => {
     });
 
     if (check === 0) {
-      createTaskColumns(LocalStorageService.getIdColumn(), validContentTask.trim(), taskNumber);
+      // createTaskColumns(LocalStorageService.getIdColumn(), validContentTask.trim(), taskNumber);
+      createTaskColumns(LocalStorageService.getIdColumn(), inputCreateTask.value.trim(), taskNumber);
+
       updateTaskNumber(taskNumber);
       openModalInputMenu(modelCreateTask);
       inputCreateTask.value = null;
